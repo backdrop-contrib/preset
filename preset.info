@@ -1,0 +1,7 @@
+name = Preset API
+description = An API that provides a user interface for managing configuration presets.
+backdrop = 1.x
+type = module
+package = Development
+tags[] = Administration
+

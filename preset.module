@@ -1,0 +1,315 @@
+<?php
+/**
+ * @file
+ * An API that provides a user interface for managing configuration presets.
+ */
+
+/**
+ * Implements hook_menu().
+ *
+ * Define menu items/paths for all modules implementing this API.
+ */
+function preset_menu() {
+  $items = array();
+
+  foreach (module_implements('preset_types') as $module) {
+    $preset_types = preset_get($module);
+    foreach ($preset_types as $type => $properties) {
+      $path_segments = explode('/', $properties['path']);
+      $path_position = count($path_segments) - 1;
+
+      $items[$properties['path']] = array(
+        'title' => $properties['name_plural'],
+        'description' => $properties['description'],
+        'page callback' => 'preset_admin_list',
+        'page arguments' => array($module, $type),
+        'access arguments' => array($properties['permission']),
+      );
+      $items[$properties['path'] . '/list'] = array(
+        'title' => 'List ' . $properties['name_plural'],
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+        'weight' => 1,
+      );
+      $items[$properties['path'] . '/add'] = array(
+        'title' => 'Add ' . $properties['name'],
+        'page callback' => 'backdrop_get_form',
+        'page arguments' => array('preset_admin_form', $module, $type),
+        'access arguments' => array($properties['permission']),
+        'type' => MENU_LOCAL_ACTION,
+        'weight' => 2,
+      );
+      $items[$properties['path'] . '/edit/%'] = array(
+        'title' => 'Edit ' . $properties['name'],
+        'page callback' => 'backdrop_get_form',
+        'page arguments' => array('preset_admin_form', $module, $type, $path_position + 2),
+        'access arguments' => array($properties['permission']),
+        'weight' => 3,
+      );
+      $items[$properties['path'] . '/delete/%'] = array(
+        'title' => 'Delete ' . $properties['name'],
+        'page callback' => 'backdrop_get_form',
+        'page arguments' => array('preset_admin_form_delete', $module, $type, $path_position + 2),
+        'access arguments' => array($properties['permission']),
+        'weight' => 4,
+      );
+
+    }
+  }
+
+  return $items;
+}
+
+/**
+ * Menu callback; Creates the listing page for preset types.
+ */
+function preset_admin_list($module, $preset_type) {
+  $config = config($module . '.' . $preset_type);
+  $properties = preset_get($module, $preset_type);
+
+  // Table header.
+  $column_count = 2;
+  $header = array($properties['id_name']);
+  if (!empty($properties['columns'])) {
+    foreach ($properties['columns'] as $column_name) {
+      $header[] = $column_name;
+      $column_count++;
+    }
+  }
+  $header[] = t('Operations');
+
+  // Table rows.
+  $rows = array();
+  foreach ($config->get() as $preset => $fields) {
+    // Add title field.
+    $row = array(
+      l($fields['title'], $properties['path'] . '/edit/' . $preset),
+    );
+
+    // Add custom fields.
+    if (!empty($properties['columns'])) {
+      foreach ($properties['columns'] as $key => $value) {
+        $row[] = $fields[$key];
+      }
+    }
+
+    // Add links.
+    $links = array(
+      'edit' => array(
+        'title' => t('Edit'),
+        'href' => $properties['path'] . '/edit/' . $preset,
+      ),
+      'delete' => array(
+        'title' => t('Delete'),
+        'href' => $properties['path'] . '/delete/' . $preset,
+      ),
+    );
+    $row[] = array(
+      'data' => array(
+        '#type' => 'operations',
+        '#links' => $links,
+      ),
+    );
+
+    $rows[] = $row;
+  }
+
+  // Display message when empty.
+  if (empty($rows)) {
+    $rows[] = array(array(
+      'colspan' => $column_count,
+      'data' => t('There are currently no @presets. <a href="!url">Add a new one</a>.', array(
+        '@presets' => $properties['name_plural'],
+        '!url' => url($properties['path'] . '/add'),
+      )),
+    ));
+  }
+
+  return array(
+    '#markup' => theme('table', array(
+      'header' => $header,
+      'rows' => $rows,
+    )),
+  );
+}
+
+/**
+ * Menu callback; Create the form for managing presets.
+ */
+function preset_admin_form($form, &$form_state, $module, $preset_type, $id = NULL) {
+  $config = config($module . '.' . $preset_type);
+  $properties = preset_get($module, $preset_type);
+
+  // Get existing values.
+  $values = ($id) ? $config->get($id) : array();
+
+  // Set page title.
+  if (isset($values['title'])) {
+    backdrop_set_title(t('Edit @preset', array(
+      '@preset' => $values['title'],
+    )));
+  }
+  else {
+    backdrop_set_title(t('Add @preset_type', array(
+      '@preset_type' => $properties['name'],
+    )));
+  }
+
+  // Get the implementing module's fields.
+  $fields = module_invoke($module, 'preset_form', $preset_type, $id);
+  $form = array_merge($form, $fields);
+
+  // Add title and machine_name fields.
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => $properties['id_name'],
+    '#default_value' => isset($values['title']) ? $values['title'] : '',
+    '#required' => TRUE,
+    '#weight' => -99,
+  );
+  $form['machine_name'] = array(
+    '#type' => 'machine_name',
+    '#machine_name' => array(
+      'exists' => 'preset_machine_name_exists',
+      'source' => array('title'),
+    ),
+    '#default_value' => ($id) ? $id : '',
+    '#disabled' => isset($id),
+    '#weight' => -98,
+  );
+
+  $form['actions']['#type'] = 'actions';
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save configuration'),
+  );
+  $form['#submit'][] = 'preset_admin_form_submit';
+
+  return $form;
+}
+
+/**
+ * Form submission handler for preset_admin_form().
+ */
+function preset_admin_form_submit($form, &$form_state) {
+  $module = $form_state['build_info']['args'][0];
+  $preset_type = $form_state['build_info']['args'][1];
+  $config = config($module . '.' . $preset_type);
+  $properties = preset_get($module, $preset_type);
+
+  form_state_values_clean($form_state);
+  $id = $form_state['values']['machine_name'];
+  unset($form_state['values']['machine_name']);
+
+  // Save values to config, under the machine name.
+  foreach ($form_state['values'] as $key => $value) {
+    if (is_array($value) && isset($form_state['values']['array_filter'])) {
+      $value = array_keys(array_filter($value));
+    }
+    $config->set($id . '.' . $key, $value);
+  }
+
+  $config->save();
+  backdrop_set_message(t('The @preset_type %id has been saved.', array(
+    '@preset_type' => $properties['name'],
+    '%id' => $config->get($id . '.title'),
+  )));
+  $form_state['redirect'] = $properties['path'];
+}
+
+/**
+ * Returns whether a preset machine name already exists.
+ *
+ * @param string $machine_name
+ *   The machine name from preset_admin_form().
+ *
+ * @return bool
+ *   Whether or not the machine name already exists.
+ */
+function preset_machine_name_exists($machine_name, $element, $form_state) {
+  $module = $form_state['build_info']['args'][0];
+  $preset_type = $form_state['build_info']['args'][1];
+
+  if (empty(config_get($module . '.' . $preset_type, $machine_name))) {
+    return FALSE;
+  }
+  else {
+    return TRUE;
+  }
+}
+
+/**
+ * Menu callback; Create the form for deleting presets.
+ */
+function preset_admin_form_delete($form, &$form_state, $module, $preset_type, $id) {
+  $config = config($module . '.' . $preset_type);
+  $properties = preset_get($module, $preset_type);
+
+  return confirm_form($form, t('Are you sure you want to delete the @preset_type %id?', array(
+    '@preset_type' => $properties['name'],
+    '%id' => $config->get($id . '.title'),
+  )), $properties['path'], '', t('Delete'), t('Cancel'));
+}
+
+/**
+ * Form submission handler for preset_admin_form_delete().
+ */
+function preset_admin_form_delete_submit($form, &$form_state) {
+  $module = $form_state['build_info']['args'][0];
+  $preset_type = $form_state['build_info']['args'][1];
+  $id = $form_state['build_info']['args'][2];
+  $config = config($module . '.' . $preset_type);
+  $properties = preset_get($module, $preset_type);
+
+  // Delete the preset.
+  $title = $config->get($id . '.title');
+  $config->clear($id);
+  $config->save();
+  backdrop_set_message(t('The @preset_type %id has been deleted.', array(
+    '@preset_type' => $properties['name'],
+    '%id' => $title,
+  )));
+  $form_state['redirect'] = $properties['path'];
+}
+
+/**
+ * Get one or more preset types from the given module.
+ *
+ * @param string $module
+ *   The module name to get preset types from.
+ * @param string $preset_type
+ *   Get a specific preset type. Set to `NULL` to get all preset types for the
+ *   given module.
+ *
+ * @return array
+ *   An associative array of preset types as defined by hook_preset_types().
+ */
+function preset_get($module, $preset_type = NULL) {
+  $preset_types = module_invoke($module, 'preset_types');
+
+  // Fill in missing values.
+  foreach ($preset_types as $type => $properties) {
+    if (!isset($properties['id_name'])) {
+      $preset_types[$type]['id_name'] = 'Title';
+    }
+
+    if (!isset($properties['name_plural'])) {
+      $preset_types[$type]['name_plural'] = $properties['name'] . 's';
+    }
+
+    if (!isset($properties['description'])) {
+      $preset_types[$type]['description'] = '';
+    }
+
+    if (!isset($properties['permission'])) {
+      $preset_types[$type]['permission'] = 'administer site configuration';
+    }
+  }
+
+  if ($preset_type) {
+    return $preset_types[$preset_type];
+  }
+  else {
+    return $preset_types;
+  }
+}
+
