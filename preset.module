@@ -19,8 +19,8 @@ function preset_menu() {
       $path_position = count($path_segments) - 1;
 
       $items[$properties['path']] = array(
-        'title' => $properties['name_plural'],
-        'description' => $properties['description'],
+        'title' => $properties['path_title'],
+        'description' => $properties['path_description'],
         'page callback' => 'preset_admin_list',
         'page arguments' => array($module, $type),
         'access arguments' => array($properties['permission']),
@@ -296,8 +296,8 @@ function preset_get($module, $preset_type = NULL) {
       $preset_types[$type]['name_plural'] = $properties['name'] . 's';
     }
 
-    if (!isset($properties['description'])) {
-      $preset_types[$type]['description'] = '';
+    if (!isset($properties['path_description'])) {
+      $preset_types[$type]['path_description'] = '';
     }
 
     if (!isset($properties['permission'])) {

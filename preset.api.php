@@ -12,12 +12,13 @@
  *   machine names and the values are associative arrays of properties for each
  *   preset type, with the following key-value pairs:
  *   - name: Required. The human-readable name of the preset type.
- *   - path: Required. The URL path to the listing page.
- *   - id_name: The human-readable name of the preset ID field. Defaults to
- *     'Title'.
  *   - name_plural: The human-readable plural name of the preset type. Defaults
  *     to the value of `name` appended with an 's'.
- *   - description: The description of the preset type. Defaults to none.
+ *   - path: Required. The URL path to the listing page.
+ *   - path_title: Required. The title of the listing page.
+ *   - path_description: The description of the listing page. Defaults to none.
+ *   - id_name: The human-readable name of the preset ID field. Defaults to
+ *     'Title'.
  *   - columns: An associative array of fields to display as additional columns
  *     in the table on the listing page. The keys of the array are field IDs
  *     (from hook_crud_form()) and the values are column names. Defaults to
@@ -29,10 +30,11 @@ function hook_preset_types() {
   return array(
     'images' => array(
       'name' => 'Image preset',
-      'path' => 'admin/config/media/image-presets',
-      'id_name' => 'Preset name',
       'name_plural' => 'Image presets',
-      'description' => 'A configuration preset for image fields.',
+      'path' => 'admin/config/media/image-presets',
+      'path_title' => 'Image presets',
+      'path_description' => 'Configure presets for image fields.',
+      'id_name' => 'Preset name',
       'columns' => array(
         'style' => 'Image style',
         'align' => 'Aligned',
