@@ -21,7 +21,7 @@
  *     'Title'.
  *   - columns: An associative array of fields to display as additional columns
  *     in the table on the listing page. The keys of the array are field IDs
- *     (from hook_crud_form()) and the values are column names. Defaults to
+ *     (from hook_preset_form()) and the values are column names. Defaults to
  *     none.
  *   - permission: The permission name for administering the preset type.
  *     Defaults to 'administer site configuration'.
@@ -92,4 +92,3 @@ function hook_preset_form($preset_type, $id) {
 
   return $form;
 }
-

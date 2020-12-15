@@ -312,4 +312,3 @@ function preset_get($module, $preset_type = NULL) {
     return $preset_types;
   }
 }
-
