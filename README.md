@@ -33,7 +33,7 @@ To setup the image presets, our module needs to:
   handles the creation of these menu paths, so our module doesn't need to
   implement `hook_menu()`.
 
-1. Implement `hook_preset_form()`.
+2. Implement `hook_preset_form()`.
 
   This hook is where our module creates the form admins will see when
   creating/editing an image preset. The title/machine name fields for the preset
@@ -41,7 +41,7 @@ To setup the image presets, our module needs to:
   selecting an image style, selecting where to float an image, choosing if a
   lightbox should be used, etc.
 
-1. Implement `hook_config_info()` and provide default config file(s).
+3. Implement `hook_config_info()` and provide default config file(s).
 
   Our module still needs to provide the config file for storing the image
   presets. Preset API stores presets in config files named
