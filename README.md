@@ -26,27 +26,27 @@ To setup the image presets, our module needs to:
 
 1. Implement `hook_preset_types()`.
 
-  This hook defines the preset type(s) the module will use. In this example,
-  there's just one: 'Image preset'. The path given here is
-  `admin/config/media/image-presets` which means this is where admins can go to
-  view, add, edit and delete image presets. Note that the Preset API module
-  handles the creation of these menu paths, so our module doesn't need to
-  implement `hook_menu()`.
+   This hook defines the preset type(s) the module will use. In this example,
+   there's just one: 'Image preset'. The path given here is
+   `admin/config/media/image-presets` which means this is where admins can go to
+   view, add, edit and delete image presets. Note that the Preset API module
+   handles the creation of these menu paths, so our module doesn't need to
+   implement `hook_menu()`.
 
 2. Implement `hook_preset_form()`.
 
-  This hook is where our module creates the form admins will see when
-  creating/editing an image preset. The title/machine name fields for the preset
-  are automatically provided, so our module just needs to add fields for
-  selecting an image style, selecting where to float an image, choosing if a
-  lightbox should be used, etc.
+   This hook is where our module creates the form admins will see when
+   creating/editing an image preset. The title/machine name fields for the
+   preset are automatically provided, so our module just needs to add fields for
+   selecting an image style, selecting where to float an image, choosing if a
+   lightbox should be used, etc.
 
 3. Implement `hook_config_info()` and provide default config file(s).
 
-  Our module still needs to provide the config file for storing the image
-  presets. Preset API stores presets in config files named
-  `[OUR-MODULE].[PRESET-TYPE].json`, where the field values are saved as
-  `[PRESET-NAME].[FIELD-NAME]`.
+   Our module still needs to provide the config file for storing the image
+   presets. Preset API stores presets in config files named
+   `[OUR-MODULE].[PRESET-TYPE].json`, where the field values are saved as
+   `[PRESET-NAME].[FIELD-NAME]`.
 
 View the `preset.api.php` file for more API documentation and examples.
 
