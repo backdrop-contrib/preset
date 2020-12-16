@@ -88,7 +88,18 @@ function preset_admin_list($module, $preset_type) {
     // Add custom fields.
     if (!empty($properties['columns'])) {
       foreach ($properties['columns'] as $key => $value) {
-        $row[] = $fields[$key];
+        if (is_array($fields[$key])) {
+          $list = array();
+          foreach ($fields[$key] as $field) {
+            if (!empty($field)) {
+              $list[] = $field;
+            }
+          }
+          $row[] = '<ul><li>' . implode('</li><li>', $list) . '</li></ul>';
+        }
+        else {
+          $row[] = $fields[$key];
+        }
       }
     }
 
