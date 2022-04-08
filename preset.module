@@ -38,8 +38,8 @@ function preset_menu() {
         'type' => MENU_LOCAL_ACTION,
         'weight' => 2,
       );
-      $items[$properties['path'] . '/edit/%'] = array(
-        'title' => 'Edit ' . $properties['name'],
+      $items[$properties['path'] . '/configure/%'] = array(
+        'title' => 'Configure ' . $properties['name'],
         'page callback' => 'backdrop_get_form',
         'page arguments' => array('preset_admin_form', $module, $type, $path_position + 2),
         'access arguments' => array($properties['permission']),
@@ -105,9 +105,9 @@ function preset_admin_list($module, $preset_type) {
 
     // Add links.
     $links = array(
-      'edit' => array(
-        'title' => t('Edit'),
-        'href' => $properties['path'] . '/edit/' . $preset,
+      'configure' => array(
+        'title' => t('Configure'),
+        'href' => $properties['path'] . '/configure/' . $preset,
       ),
       'delete' => array(
         'title' => t('Delete'),
@@ -155,7 +155,7 @@ function preset_admin_form($form, &$form_state, $module, $preset_type, $id = NUL
 
   // Set page title.
   if (isset($values['title'])) {
-    backdrop_set_title(t('Edit @preset', array(
+    backdrop_set_title(t('Configure @preset', array(
       '@preset' => $values['title'],
     )));
   }
