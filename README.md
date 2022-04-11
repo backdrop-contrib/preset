@@ -5,7 +5,7 @@ Preset API is an API module that provides a user interface for managing
 configuration presets.
 
 A configuration preset is a collection of settings that are saved to, and read
-from, config. If your module needs a UI for adding, editing and deleting
+from, config. If your module needs a UI for adding, configuring and deleting
 configuration presets, Preset API will do the heavy lifting for you.
 
 As an API, this module does not do anything on its own. It simply provides hooks
@@ -29,14 +29,14 @@ To setup the image presets, our module needs to:
    This hook defines the preset type(s) the module will use. In this example,
    there's just one: 'Image preset'. The path given here is
    `admin/config/media/image-presets` which means this is where admins can go to
-   view, add, edit and delete image presets. Note that the Preset API module
-   handles the creation of these menu paths, so our module doesn't need to
-   implement `hook_menu()`.
+   view, add, configure and delete image presets. Note that the Preset API
+   module handles the creation of these menu paths, so our module doesn't need
+   to implement `hook_menu()`.
 
 2. Implement `hook_preset_form()`.
 
    This hook is where our module creates the form admins will see when
-   creating/editing an image preset. The title/machine name fields for the
+   creating/configuring an image preset. The title/machine name fields for the
    preset are automatically provided, so our module just needs to add fields for
    selecting an image style, selecting where to float an image, choosing if a
    lightbox should be used, etc.

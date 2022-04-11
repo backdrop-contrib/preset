@@ -45,7 +45,7 @@ function hook_preset_types() {
 }
 
 /**
- * Create the form for adding/editing presets.
+ * Create the form for adding/configuring presets.
  *
  * @param string $preset_type
  *   The machine name of the preset type this form is used for. If you are
@@ -53,7 +53,7 @@ function hook_preset_types() {
  *   `switch` statement here and then call a different function for each preset
  *   type. This avoids having multiple form definitions in one function.
  * @param string $id
- *   The ID of the existing preset to edit. This is `NULL` when adding a new
+ *   The ID of the existing preset to confgure. This is `NULL` when adding a new
  *   preset.
  *
  * @return array
