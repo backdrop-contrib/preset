@@ -45,6 +45,13 @@ function preset_menu() {
         'access arguments' => array($properties['permission']),
         'weight' => 3,
       );
+      // Include '/edit/' as a redirect for backwards-compatibility.
+      $items[$properties['path'] . '/edit/%'] = array(
+        'page callback' => '_preset_edit_redirect',
+        'page arguments' => array($properties['path'], $path_position + 2),
+        'access arguments' => array($properties['permission']),
+        'type' => MENU_CALLBACK,
+      );
       $items[$properties['path'] . '/delete/%'] = array(
         'title' => 'Delete ' . $properties['name'],
         'page callback' => 'backdrop_get_form',
@@ -57,6 +64,14 @@ function preset_menu() {
   }
 
   return $items;
+}
+
+/**
+ * Menu callback; Redirect from preset '/edit/' URLs to '/configure/' for
+ * backwards-compatibility.
+ */
+function _preset_edit_redirect($path, $component) {
+  backdrop_goto($path . '/configure/' . $component, array(), 301);
 }
 
 /**
