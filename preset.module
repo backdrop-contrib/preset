@@ -82,7 +82,10 @@ function preset_admin_list($module, $preset_type) {
   foreach ($config->get() as $preset => $fields) {
     // Add title field.
     $row = array(
-      l($fields['title'], $properties['path'] . '/edit/' . $preset),
+      theme('label_machine_name', array(
+        'label' => $fields['title'],
+        'machine_name' => $preset,
+      )),
     );
 
     // Add custom fields.
