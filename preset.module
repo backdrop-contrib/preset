@@ -81,9 +81,11 @@ function preset_admin_list($module, $preset_type) {
   $rows = array();
   foreach ($config->get() as $preset => $fields) {
     // Add title field.
-    dpm('hai');
     $row = array(
-      theme('label_machine_name', array('label' => $fields['title'], 'machine_name' => $preset));
+      theme('label_machine_name', array(
+        'label' => $fields['title'],
+        'machine_name' => $preset,
+      )),
     );
 
     // Add custom fields.
