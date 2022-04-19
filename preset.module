@@ -127,11 +127,24 @@ function preset_admin_list($module, $preset_type) {
         'title' => t('Configure'),
         'href' => $properties['path'] . '/configure/' . $preset,
       ),
+      'export' => array(
+        'title' => t('Export'),
+        'href' => 'admin/config/development/configuration/single/export',
+      ),
       'delete' => array(
         'title' => t('Delete'),
         'href' => $properties['path'] . '/delete/' . $preset,
       ),
     );
+
+    // Add specific values for export operation.
+    if (isset($properties['group']) && isset($properties['prefix'])) {
+      $links['export']['query'] = array(
+        'group' => $properties['group'], 
+        'name' => $properties['prefix'] . '.' . $preset,
+      );
+    }
+
     $row[] = array(
       'data' => array(
         '#type' => 'operations',
