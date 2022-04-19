@@ -25,6 +25,8 @@
  *     none.
  *   - permission: The permission name for administering the preset type.
  *     Defaults to 'administer site configuration'.
+ *   - group: The config group from hook_config_info(). (Used for export op.)
+ *   - prefix: The prefix key from hook_config_info(). (Used for export op.)
  */
 function hook_preset_types() {
   return array(
@@ -40,6 +42,8 @@ function hook_preset_types() {
         'align' => 'Aligned',
       ),
       'permission' => 'administer image presets',
+      'group' => t('Configuration'),
+      'prefix' => 'mymodule.settings',
     ),
   );
 }
