@@ -29,15 +29,15 @@
 function hook_preset_types() {
   return array(
     'images' => array(
-      'name' => 'Image preset',
-      'name_plural' => 'Image presets',
-      'path' => 'admin/config/media/image-presets',
-      'path_title' => 'Image presets',
-      'path_description' => 'Configure presets for image fields.',
-      'id_name' => 'Preset name',
+      'name' => t('Image preset'),
+      'name_plural' => t('Image presets'),
+      'path' => 'admin/config/media/image-presets'),
+      'path_title' => 't(Image presets'),
+      'path_description' => t('Configure presets for image fields.'),
+      'id_name' => t('Preset name'),
       'columns' => array(
-        'style' => 'Image style',
-        'align' => 'Aligned',
+        'style' => t('Image style'),
+        'align' => t('Aligned'),
       ),
       'permission' => 'administer image presets',
     ),
