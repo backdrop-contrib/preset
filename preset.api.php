@@ -25,26 +25,22 @@
  *     none.
  *   - permission: The permission name for administering the preset type.
  *     Defaults to 'administer site configuration'.
- *   - individual: TRUE if you would like configuration for each preset stored 
- *     in individual files, FALSE if you would like confifuration for all
- *     presets stored in a single file. 
  *   - group: The config group from hook_config_info().
  */
 function hook_preset_types() {
   return array(
     'images' => array(
-      'name' => 'Image preset',
-      'name_plural' => 'Image presets',
+      'name' => t('Image preset'),
       'path' => 'admin/config/media/image-presets',
-      'path_title' => 'Image presets',
-      'path_description' => 'Configure presets for image fields.',
-      'id_name' => 'Preset name',
+      'path_title' => t('Image presets'),
+      'name_plural' => t('Image presets'),
+      'path_description' => t('Configure presets for image fields.'),
+      'id_name' => t('Preset name'),
       'columns' => array(
-        'style' => 'Image style',
-        'align' => 'Aligned',
+        'style' => t('Image style'),
+        'align' => t('Aligned'),
       ),
       'permission' => 'administer image presets',
-      'individual' => FALSE,
     ),
     'video_style' => array(
       'name' => t('Video style'),
@@ -54,7 +50,6 @@ function hook_preset_types() {
       'path_title' => t('Video styles'),
       'path_description' => t('Administer Video Embed Field\'s video styles.'),
       'permission' => 'administer video styles',
-      'individual' => TRUE,
       'group' => t('Video styles'),
     ),
   );
