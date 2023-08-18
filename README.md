@@ -66,6 +66,7 @@ Current Maintainers
 -------------------
 
 - Peter Anderson (https://github.com/BWPanda).
+- Laryn Kragt Bakker (https://github.com/laryn).
 
 Credits
 -------
