@@ -166,26 +166,14 @@ function preset_admin_list($module, $preset_type) {
  */
 function preset_admin_form($form, &$form_state, $module, $preset_type, $id = NULL) {
   $properties = preset_get($module, $preset_type);
-  
-  // Get existing values.
-  if (array_key_exists('individual', $properties) && $properties['individual']) {
-    $config_file_name = $module . '.' . $preset_type . '.' . $id;
-    $config = config($config_file_name);
-    $values = $config->get();
-  }
-  else {
-    $config_file_name = $module . '.' . $preset_type;
-    $config = config($config_file_name);
-    $values = ($id) ? $config->get($id) : array();
-  }
 
   // Get existing values.
-  if (array_key_exists('individual', $properties) && $properties['individual']) {
-    $values = $config->get();
-  }
-  else {
-    $values = ($id) ? $config->get($id) : array();
-  }
+  $config_file_name = $module . '.' . $preset_type . '.' . $id;
+  $config = config($config_file_name);
+  $values = $config->get();
+
+  // Get existing values.
+  $values = $config->get();
 
   // Set page title.
   if (isset($values['title'])) {
@@ -250,7 +238,7 @@ function preset_admin_form_submit($form, &$form_state) {
   $module = $form_state['values']['module'];
   $preset_type = $form_state['values']['preset_type'];
   $properties = preset_get($module, $preset_type);
-  
+
   form_state_values_clean($form_state);
   $id = $form_state['values']['machine_name'];
 
@@ -261,13 +249,7 @@ function preset_admin_form_submit($form, &$form_state) {
       $value = array_keys(array_filter($value));
     }
 
-    if (array_key_exists('individual', $properties) && $properties['individual']) {
-      $config->set($key, $value);
-    }
-    else {
-      // Save under the machine name.
-      $config->set($id . '.' . $key, $value);
-    }
+    $config->set($key, $value);
   }
   $config->save();
 
@@ -377,7 +359,7 @@ function preset_get($module, $preset_type = NULL) {
 
 /**
  * Gets configuration for all presets.
- * 
+ *
  * @param string $module
  *   The module name to get preset types from.
  * @param string $preset_type
@@ -386,7 +368,7 @@ function preset_get($module, $preset_type = NULL) {
  * @param array $properties
  *   Properties of the preset type.
  * @param string $id
- *   The mahcine name of a specific preset.
+ *   The machine name of a specific preset.
  *
  * @return array
  *   An associative array of all preset configurations keyed by machine name.
@@ -396,20 +378,12 @@ function preset_get_config($module, $preset_type, $properties = array(), $id = F
     $properties = preset_get($module, $preset_type);
   }
 
-  if (array_key_exists('individual', $properties) && $properties['individual']) {
-    // Multple config files
-    $config_names = config_get_names_with_prefix($module . '.' . $preset_type);
-    $configs = array();
-    foreach($config_names as $name) {
-      $name_parts = explode('.', $name);
-      $id = array_pop($name_parts);
-      $configs[$id] = config_get($name);
-    }
-  }
-  else {
-    // Single config file.
-    $config = config($module . '.' . $preset_type);
-    $configs = $config->get();
+  $config_names = config_get_names_with_prefix($module . '.' . $preset_type);
+  $configs = array();
+  foreach($config_names as $name) {
+    $name_parts = explode('.', $name);
+    $config_id = array_pop($name_parts);
+    $configs[$config_id] = config_get($name);
   }
 
   if ($id) {
