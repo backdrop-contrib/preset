@@ -291,12 +291,12 @@ function preset_machine_name_exists($machine_name, $element, $form_state) {
  * Menu callback; Create the form for deleting presets.
  */
 function preset_admin_form_delete($form, &$form_state, $module, $preset_type, $id) {
-  $config = config($module . '.' . $preset_type);
+  $config = config($module . '.' . $preset_type . '.' . $id);
   $properties = preset_get($module, $preset_type);
 
   return confirm_form($form, t('Are you sure you want to delete the @preset_type %id?', array(
     '@preset_type' => $properties['name'],
-    '%id' => $config->get($id . '.title'),
+    '%id' => $config->get('title'),
   )), $properties['path'], '', t('Delete'), t('Cancel'));
 }
 
@@ -307,13 +307,12 @@ function preset_admin_form_delete_submit($form, &$form_state) {
   $module = $form_state['build_info']['args'][0];
   $preset_type = $form_state['build_info']['args'][1];
   $id = $form_state['build_info']['args'][2];
-  $config = config($module . '.' . $preset_type);
+  $config = config($module . '.' . $preset_type . '.' . $id);
   $properties = preset_get($module, $preset_type);
 
   // Delete the preset.
-  $title = $config->get($id . '.title');
-  $config->clear($id);
-  $config->save();
+  $title = $config->get('title');
+  $config->delete();
   backdrop_set_message(t('The @preset_type %id has been deleted.', array(
     '@preset_type' => $properties['name'],
     '%id' => $title,
