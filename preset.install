@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ */
+
+/**
+ * Convert presets to individual configuration files.
+ */
+function preset_update_1200() {
+  $preset_types = array();
+  foreach (module_implements('preset_types') as $module) {
+    $preset_types[$module] = preset_get($module);
+    foreach ($preset_types[$module] as $preset_type => $preset_info) {
+      $old_config = config($module . '.' . $preset_type);
+      foreach ($old_config->get() as $preset => $fields) {
+        $new_config = config($module . '.' . $preset_type . '.' . $preset);
+        $new_config->setData($fields);
+        $new_config->save();
+        }
+      $old_config->delete();
+    }
+  }
+}

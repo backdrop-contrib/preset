@@ -8,24 +8,24 @@
  * Define preset types.
  *
  * @return array
- *   An associative array of preset types, where the keys are preset type names
- *   and the values are associative arrays of preset type properties with the
- *   following key-value pairs:
- *   - name: The translated label of the preset type.
- *   - path: The URL path to the listing page.
- *   - path_title: The translated title of the listing page.
- *   - name_plural: (optional) The translated plural label of the preset type.
- *     Defaults to the value of `name` appended with an 's'.
- *   - path_description: (optional) The translated description of the listing
- *     page. Defaults to none.
- *   - id_name: (optional) The translated label of the preset ID field. Defaults
- *     to 'Title'.
- *   - columns: (optional) An associative array of fields to display as
- *     additional columns in the table on the listing page. The keys are field
- *     IDs (from `hook_preset_form()`) and the values are translated column
- *     names. Defaults to none.
- *   - permission: (optional) The permission name for administering the preset
- *     type. Defaults to 'administer site configuration'.
+ *   An associative array of preset types. The keys of the array are preset type
+ *   machine names and the values are associative arrays of properties for each
+ *   preset type, with the following key-value pairs:
+ *   - name: Required. The human-readable name of the preset type.
+ *   - name_plural: The human-readable plural name of the preset type. Defaults
+ *     to the value of `name` appended with an 's'.
+ *   - path: Required. The URL path to the listing page.
+ *   - path_title: Required. The title of the listing page.
+ *   - path_description: The description of the listing page. Defaults to none.
+ *   - id_name: The human-readable name of the preset ID field. Defaults to
+ *     'Title'.
+ *   - columns: An associative array of fields to display as additional columns
+ *     in the table on the listing page. The keys of the array are field IDs
+ *     (from hook_preset_form()) and the values are column names. Defaults to
+ *     none.
+ *   - permission: The permission name for administering the preset type.
+ *     Defaults to 'administer site configuration'.
+ *   - group: The config group from hook_config_info().
  */
 function hook_preset_types() {
   return array(
@@ -41,6 +41,16 @@ function hook_preset_types() {
         'align' => t('Aligned'),
       ),
       'permission' => 'administer image presets',
+    ),
+    'video_style' => array(
+      'name' => t('Video style'),
+      'id_name' => t('Video style'),
+      'name_plural' => t('Video styles'),
+      'path' => 'admin/config/media/vef',
+      'path_title' => t('Video styles'),
+      'path_description' => t('Administer Video Embed Field\'s video styles.'),
+      'permission' => 'administer video styles',
+      'group' => t('Video styles'),
     ),
   );
 }
