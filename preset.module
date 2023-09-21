@@ -167,13 +167,19 @@ function preset_admin_list($module, $preset_type) {
 function preset_admin_form($form, &$form_state, $module, $preset_type, $id = NULL) {
   $properties = preset_get($module, $preset_type);
 
-  // Get existing values.
-  $config_file_name = $module . '.' . $preset_type . '.' . $id;
-  $config = config($config_file_name);
-  $values = $config->get();
+  if (empty($id)) {
+    $id = $form_state['input']['machine_name'];
+  }
 
   // Get existing values.
-  $values = $config->get();
+  if (!empty($id)) {
+    $config_file_name = $module . '.' . $preset_type . '.' . $id;
+    $config = config($config_file_name);
+    $values = $config->get();
+  }
+  else {
+    $values = array();
+  }
 
   // Set page title.
   if (isset($values['title'])) {
