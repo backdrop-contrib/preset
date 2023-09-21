@@ -167,7 +167,7 @@ function preset_admin_list($module, $preset_type) {
 function preset_admin_form($form, &$form_state, $module, $preset_type, $id = NULL) {
   $properties = preset_get($module, $preset_type);
 
-  if (empty($id)) {
+  if (empty($id) && !empty($form_state['input']['machine_name'])) {
     $id = $form_state['input']['machine_name'];
   }
 
